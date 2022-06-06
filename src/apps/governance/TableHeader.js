@@ -4,6 +4,7 @@ import { css } from "@emotion/react";
 import { Paper, IconButton, TextField, Chip } from "@mui/material";
 import { FilterList, FilterListOff } from "@mui/icons-material";
 import { useState } from "react";
+import Collapse from "@mui/material/Collapse";
 
 const categoryLists = [
   "Glover Teixeira",
@@ -76,7 +77,7 @@ const TableHeader = () => {
         </div>
       </div>
 
-      {selectFilter && (
+      <Collapse in={selectFilter} timeout="auto" unmountOnExit>
         <div
           css={css`
             margin-top: 0.5em;
@@ -110,7 +111,7 @@ const TableHeader = () => {
             />
           ))}
         </div>
-      )}
+      </Collapse>
     </Paper>
   );
 };
