@@ -1,6 +1,8 @@
 /* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import TableHeader from "./TableHeader";
+
 import {
   TableContainer,
   TableHead,
@@ -30,7 +32,7 @@ const Dashboard = () => {
         margin: 2em;
       `}
     >
-      {" "}
+      <TableHeader />
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
