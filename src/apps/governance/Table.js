@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
@@ -16,7 +16,12 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { Chip } from "@mui/material";
 import { useTheme } from "@mui/material";
+
+import GovernanceData from "sovryn-governance-data";
+
+const governanceData = new GovernanceData(localStorage);
 
 function createData(name, calories, fat, carbs, protein, price) {
   return {
@@ -42,7 +47,7 @@ function createData(name, calories, fat, carbs, protein, price) {
 }
 
 function Row(props) {
-  const { row } = props;
+  const { row, contract } = props;
   const [open, setOpen] = React.useState(false);
 
   const theme = useTheme();
@@ -67,11 +72,17 @@ function Row(props) {
           component="th"
           scope="row"
         >
-          {row.name}
+          {contract.contractName}
         </TableCell>
-        <TableCell align="center">{row.calories}</TableCell>
-        <TableCell align="center">{row.fat}</TableCell>
-        <TableCell align="center">{row.carbs}</TableCell>
+        <TableCell align="center">{contract.address}</TableCell>
+        <TableCell align="center">{contract.governor?.value}</TableCell>
+        <TableCell align="center">
+          <Chip
+            color="primary"
+            label={contract.categoryName}
+            variant="outlined"
+          />
+        </TableCell>
       </TableRow>
       <TableRow
         css={css`
@@ -141,6 +152,26 @@ const rows = [
 ];
 
 export default function CollapsibleTable() {
+  const [governanceState, setGovernanceState] = useState(
+    governanceData.getData()
+  );
+
+  useEffect(() => {
+    governanceData.onChange((currentData) => {
+      setGovernanceState(currentData);
+    });
+  }, []);
+
+  const contracts = governanceState.categories.reduce((pV, cV) => {
+    return [
+      ...pV,
+      ...cV.contracts.map((cont) => ({
+        categoryName: cV.categoryName,
+        ...cont,
+      })),
+    ];
+  }, []);
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
@@ -154,8 +185,8 @@ export default function CollapsibleTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <Row key={row.name} row={row} />
+          {contracts.map((contract) => (
+            <Row key={contract.address} row={rows[0]} contract={contract} />
           ))}
         </TableBody>
       </Table>

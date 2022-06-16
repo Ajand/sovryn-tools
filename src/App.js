@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Router from "./apps/Router";
 import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
 
@@ -13,14 +14,14 @@ const theme = createTheme({
     text: {
       primary: "#E8E8E8",
     },
-    
   },
   typography: {
-    fontFamily: "Montserrat"
-  }
+    fontFamily: "Montserrat",
+  },
 });
 
 function App() {
+
   return (
     <div>
       <ThemeProvider theme={theme}>
