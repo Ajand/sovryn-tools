@@ -46,7 +46,7 @@ function createData(name, calories, fat, carbs, protein, price) {
 }
 
 function Row(props) {
-  const { row, contract } = props;
+  const { row, contract, getContractName } = props;
   const [open, setOpen] = React.useState(false);
   const [additionalData, setAdditionalData] = useState(null);
 
@@ -94,7 +94,9 @@ function Row(props) {
               target="_blank"
               href={`https://explorer.rsk.co/address/${contract.governor?.value}`}
             >
-              {formatAddress(contract.governor?.value)}
+              {getContractName(contract.governor.value)
+                ? getContractName(contract.governor.value)
+                : formatAddress(contract.governor?.value)}
             </Link>
           ) : contract.governor?.loading ? (
             "Loading"
@@ -218,67 +220,15 @@ export default function CollapsibleTable({
   selectedCategories,
   searchString,
 }) {
-  const contracts = governanceState.categories.reduce((pV, cV) => {
-    return [
-      ...pV,
-      ...cV.contracts.map((cont) => ({
-        params: cont.getParams(),
-        categoryName: cV.categoryName,
-        ...cont,
-      })),
-    ];
-  }, []);
-
-  const allCategories = governanceState.categories.map(
-    (cat) => cat.categoryName
-  );
-
-  const filterSelectedCategories =
-    (allContracts) =>
-    (categories = []) => {
-      if (categories.length === 0) return allContracts;
-      return allContracts.filter((cont) =>
-        categories.includes(cont.categoryName)
-      );
-    };
-
-  const filterBySearchString = (allContracts) => (searchStr) => {
-    if (!searchStr) return allContracts;
-    const result = new Set([]);
-    allContracts
-      .filter(
-        (cont) =>
-          cont.contractName.toLowerCase().indexOf(searchStr.toLowerCase()) > -1
-      )
-      .forEach((cont) => result.add(cont));
-    allContracts
-      .filter((cont) => {
-        return cont.address.toLowerCase().indexOf(searchStr.toLowerCase()) > -1;
-      })
-      .forEach((cont) => result.add(cont));
-    allContracts
-      .filter((cont) => cont.governor?.value)
-      .filter((cont) => {
-        return (
-          cont.governor?.value.toLowerCase().indexOf(searchStr.toLowerCase()) >
-          -1
-        );
-      })
-      .forEach((cont) => result.add(cont));
-    return [...result];
-  };
-
-  const getContractName = (allContracts) => (contractAddress) => {
-    return allContracts.find(
-      (cont) => cont.address.toLowerCase() === contractAddress.toLowerCase()
-    )?.contractName;
-  };
-
   const renderableContracts = utils.filterBySearchString(
     utils.filterSelectedCategories(utils.getContracts(governanceState))(
       selectedCategories
     )
   )(searchString);
+
+  const getContractName = utils.getContractName(
+    utils.getContracts(governanceState)
+  );
 
   return (
     <TableContainer component={Paper}>
@@ -298,6 +248,7 @@ export default function CollapsibleTable({
               key={`${contract.address}:${i}`}
               row={rows[0]}
               contract={contract}
+              getContractName={getContractName}
             />
           ))}
         </TableBody>
