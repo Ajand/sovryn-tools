@@ -103,6 +103,7 @@ const TableHeader = () => {
                 margin-right: 0.25em;
                 margin-top: 0.5em;
               `}
+              key={category}
               variant={selectedCategories.has(category) ? "filled" : "outlined"}
               label={category}
               onClick={() => {

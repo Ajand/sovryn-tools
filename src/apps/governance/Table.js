@@ -16,12 +16,18 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { Chip } from "@mui/material";
+import { Chip, Link, Button, Dialog, DialogTitle } from "@mui/material";
 import { useTheme } from "@mui/material";
+import formatAddress from "../../utils/formatAddress";
 
 import GovernanceData from "sovryn-governance-data";
 
-const governanceData = new GovernanceData(localStorage);
+const governanceData = new GovernanceData(
+  localStorage,
+  "https://mainnet.sovryn.app/"
+);
+
+governanceData.onChange(() => {});
 
 function createData(name, calories, fat, carbs, protein, price) {
   return {
@@ -49,20 +55,29 @@ function createData(name, calories, fat, carbs, protein, price) {
 function Row(props) {
   const { row, contract } = props;
   const [open, setOpen] = React.useState(false);
+  const [additionalData, setAdditionalData] = useState(null);
 
   const theme = useTheme();
+
+  const notOwnerParams = contract.params.filter(
+    (param) => param.identifier !== "owner"
+  );
+
+  console.log(contract.governor?.loading);
 
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell align="center">
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
+          {!!notOwnerParams.length && (
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          )}
         </TableCell>
         <TableCell
           css={css`
@@ -74,14 +89,30 @@ function Row(props) {
         >
           {contract.contractName}
         </TableCell>
-        <TableCell align="center">{contract.address}</TableCell>
-        <TableCell align="center">{contract.governor?.value}</TableCell>
         <TableCell align="center">
-          <Chip
-            color="primary"
-            label={contract.categoryName}
-            variant="outlined"
-          />
+          <Link
+            target="_blank"
+            href={`https://explorer.rsk.co/address/${contract.address}`}
+          >
+            {formatAddress(contract.contract.address)}
+          </Link>
+        </TableCell>
+        <TableCell align="center">
+          {contract.governor.value ? (
+            <Link
+              target="_blank"
+              href={`https://explorer.rsk.co/address/${contract.governor?.value}`}
+            >
+              {formatAddress(contract.governor?.value)}
+            </Link>
+          ) : contract.governor?.loading ? (
+            "Loading"
+          ) : (
+            "N/A"
+          )}
+        </TableCell>
+        <TableCell align="center">
+          <Chip label={contract.categoryName} variant="outlined" />
         </TableCell>
       </TableRow>
       <TableRow
@@ -104,15 +135,30 @@ function Row(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
+                  {notOwnerParams.map((param) => (
+                    <TableRow
+                      key={`${notOwnerParams.identifier}:${param?.name}`}
+                    >
                       <TableCell align="center" component="th" scope="row">
-                        {historyRow.date}
+                        {param?.name}
                       </TableCell>
+                      <TableCell align="center">{param.identifier}</TableCell>
                       <TableCell align="center">
-                        {historyRow.customerId}
+                        {param?.value instanceof Map ? (
+                          <Button
+                            onClick={() => setAdditionalData(param)}
+                            size="small"
+                          >
+                            Show Details
+                          </Button>
+                        ) : param.value ? (
+                          String(param.value)
+                        ) : param.loading ? (
+                          "Loading"
+                        ) : (
+                          "N/A"
+                        )}
                       </TableCell>
-                      <TableCell align="center">{historyRow.amount}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -121,6 +167,31 @@ function Row(props) {
           </Collapse>
         </TableCell>
       </TableRow>
+      {additionalData && (
+        <Dialog onClose={() => setAdditionalData(null)} open={additionalData}>
+          <DialogTitle>{additionalData?.name}</DialogTitle>
+          <div>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Key</TableCell>
+                  <TableCell align="center">Value</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {[...additionalData.value].map((aD) => {
+                  return (
+                    <TableRow>
+                      <TableCell align="center">{String(aD[0])}</TableCell>
+                      <TableCell align="center">{aD[1].toString()}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        </Dialog>
+      )}
     </React.Fragment>
   );
 }
@@ -166,11 +237,58 @@ export default function CollapsibleTable() {
     return [
       ...pV,
       ...cV.contracts.map((cont) => ({
+        params: cont.getParams(),
         categoryName: cV.categoryName,
         ...cont,
       })),
     ];
   }, []);
+
+  const allCategories = governanceState.categories.map(
+    (cat) => cat.categoryName
+  );
+
+  const filterSelectedCategories =
+    (allContracts) =>
+    (categories = []) => {
+      if (categories.length === 0) return allContracts;
+      return allContracts.filter((cont) =>
+        categories.includes(cont.categoryName)
+      );
+    };
+
+  const filterBySearchString = (allContracts) => (searchStr) => {
+    if (!searchStr) return allContracts;
+    const result = new Set([]);
+    allContracts
+      .filter(
+        (cont) =>
+          cont.contractName.toLowerCase().indexOf(searchStr.toLowerCase()) > -1
+      )
+      .forEach((cont) => result.add(cont));
+    allContracts
+      .filter((cont) => {
+        return cont.address.toLowerCase().indexOf(searchStr.toLowerCase()) > -1;
+      })
+      .forEach((cont) => result.add(cont));
+    allContracts
+      .filter((cont) => cont.governor?.value)
+      .filter((cont) => {
+        return (
+          cont.governor?.value.toLowerCase().indexOf(searchStr.toLowerCase()) >
+          -1
+        );
+      })
+      .forEach((cont) => result.add(cont));
+    return [...result];
+  };
+
+  const getContractName = (allContracts) => (contractAddress) => {
+    console.log(contractAddress.toLowerCase());
+    return allContracts.find(
+      (cont) => cont.address.toLowerCase() === contractAddress.toLowerCase()
+    )?.contractName;
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -185,8 +303,12 @@ export default function CollapsibleTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {contracts.map((contract) => (
-            <Row key={contract.address} row={rows[0]} contract={contract} />
+          {contracts.map((contract, i) => (
+            <Row
+              key={`${contract.address}:${i}`}
+              row={rows[0]}
+              contract={contract}
+            />
           ))}
         </TableBody>
       </Table>
