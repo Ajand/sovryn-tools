@@ -20,14 +20,7 @@ import { Chip, Link, Button, Dialog, DialogTitle } from "@mui/material";
 import { useTheme } from "@mui/material";
 import formatAddress from "../../utils/formatAddress";
 
-import GovernanceData from "sovryn-governance-data";
-
-const governanceData = new GovernanceData(
-  localStorage,
-  "https://mainnet.sovryn.app/"
-);
-
-governanceData.onChange(() => {});
+import { utils } from "sovryn-governance-data";
 
 function createData(name, calories, fat, carbs, protein, price) {
   return {
@@ -62,8 +55,6 @@ function Row(props) {
   const notOwnerParams = contract.params.filter(
     (param) => param.identifier !== "owner"
   );
-
-  console.log(contract.governor?.loading);
 
   return (
     <React.Fragment>
@@ -222,17 +213,10 @@ const rows = [
   createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
 ];
 
-export default function CollapsibleTable() {
-  const [governanceState, setGovernanceState] = useState(
-    governanceData.getData()
-  );
-
-  useEffect(() => {
-    governanceData.onChange((currentData) => {
-      setGovernanceState(currentData);
-    });
-  }, []);
-
+export default function CollapsibleTable({
+  governanceState,
+  selectedCategories,
+}) {
   const contracts = governanceState.categories.reduce((pV, cV) => {
     return [
       ...pV,
@@ -284,11 +268,14 @@ export default function CollapsibleTable() {
   };
 
   const getContractName = (allContracts) => (contractAddress) => {
-    console.log(contractAddress.toLowerCase());
     return allContracts.find(
       (cont) => cont.address.toLowerCase() === contractAddress.toLowerCase()
     )?.contractName;
   };
+
+  const renderableContracts = utils.filterSelectedCategories(
+    utils.getContracts(governanceState)
+  )(selectedCategories);
 
   return (
     <TableContainer component={Paper}>
@@ -303,7 +290,7 @@ export default function CollapsibleTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {contracts.map((contract, i) => (
+          {renderableContracts.map((contract, i) => (
             <Row
               key={`${contract.address}:${i}`}
               row={rows[0]}

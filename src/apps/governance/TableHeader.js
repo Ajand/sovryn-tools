@@ -5,38 +5,17 @@ import { Paper, IconButton, TextField, Chip } from "@mui/material";
 import { FilterList, FilterListOff } from "@mui/icons-material";
 import { useState } from "react";
 import Collapse from "@mui/material/Collapse";
+import { utils } from "sovryn-governance-data";
 
-const categoryLists = [
-  "Glover Teixeira",
-  "Jiri Prochazka",
-  "Tactical Breakdown",
-  "Hardy Breakdown",
-  "getting himself",
-  "training and nutrition",
-  "Starting to see",
-  "that fought Dom",
-  "like an executioner",
-  "against Jiri",
-  "light heavyweight",
-  "title on the line",
-  "Hardy takes an in",
-  "against a very tough",
-  "round bouts",
-];
+const TableHeader = ({
+  governanceState,
+  selectedCategories,
+  selectCategories,
+  setSelectedCategories,
+}) => {
+  const categoryLists = utils.getAllCategories(governanceState);
 
-const TableHeader = () => {
   const [selectFilter, setSelectFilter] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState(new Set());
-
-  const selectCategories = (category) => {
-    const nS = new Set([...selectedCategories]);
-    if (nS.has(category)) {
-      nS.delete(category);
-    } else {
-      nS.add(category);
-    }
-    setSelectedCategories(nS);
-  };
 
   const changeSelectFilter = () => setSelectFilter(!selectFilter);
 
