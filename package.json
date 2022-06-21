@@ -1,5 +1,6 @@
 {
   "name": "sovryn-tools",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -14,7 +15,7 @@
     "react-dom": "^18.1.0",
     "react-router-dom": "6",
     "react-scripts": "5.0.1",
-    "sovryn-governance-data": "^1.0.18",
+    "sovryn-governance-data": "^1.0.21",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

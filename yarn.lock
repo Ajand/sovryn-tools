@@ -8756,10 +8756,10 @@ sourcemap-codec@^1.4.8:
   resolved "https://registry.yarnpkg.com/sourcemap-codec/-/sourcemap-codec-1.4.8.tgz#ea804bd94857402e6992d05a38ef1ae35a9ab4c4"
   integrity sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==
 
-sovryn-governance-data@^1.0.18:
-  version "1.0.18"
-  resolved "https://registry.yarnpkg.com/sovryn-governance-data/-/sovryn-governance-data-1.0.18.tgz#0427bad5a9e879ad880d7454772fd270014cace2"
-  integrity sha512-+2zcuDlwbv91moPKIj3/VP8XW4IPqoBz8cz69FI1eM8BYyg09/kcXGqyoFdAds78NneLYp2DFh1EV6qJyyWIrQ==
+sovryn-governance-data@^1.0.21:
+  version "1.0.21"
+  resolved "https://registry.yarnpkg.com/sovryn-governance-data/-/sovryn-governance-data-1.0.21.tgz#534e3cc83e6a542009d4d1c6d00db9f50a7b02c5"
+  integrity sha512-Ma0+K8mWwi/PvbFaVqR380IxYhSy/gGT3EeiuflYuOV0Log7xBNyJSenF5hfkny8wHS8WZKdcAjGV5rF3dsUUQ==
   dependencies:
     ethers "^5.6.4"
     web3-utils "^1.7.3"
