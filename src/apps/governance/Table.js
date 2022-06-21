@@ -216,6 +216,7 @@ const rows = [
 export default function CollapsibleTable({
   governanceState,
   selectedCategories,
+  searchString,
 }) {
   const contracts = governanceState.categories.reduce((pV, cV) => {
     return [
@@ -273,9 +274,11 @@ export default function CollapsibleTable({
     )?.contractName;
   };
 
-  const renderableContracts = utils.filterSelectedCategories(
-    utils.getContracts(governanceState)
-  )(selectedCategories);
+  const renderableContracts = utils.filterBySearchString(
+    utils.filterSelectedCategories(utils.getContracts(governanceState))(
+      selectedCategories
+    )
+  )(searchString);
 
   return (
     <TableContainer component={Paper}>

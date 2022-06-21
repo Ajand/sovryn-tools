@@ -17,6 +17,7 @@ const Dashboard = () => {
   const [governanceState, setGovernanceState] = useState(
     governanceData.getData()
   );
+  const [searchString, setSearchString] = useState("");
 
   const [selectedCategories, setSelectedCategories] = useState(new Set());
 
@@ -47,11 +48,14 @@ const Dashboard = () => {
         selectCategories={selectCategories}
         setSelectedCategories={setSelectedCategories}
         governanceState={governanceState}
+        searchString={searchString}
+        setSearchString={setSearchString}
       />
       <TableContainer component={Paper}>
         <Table
           governanceState={governanceState}
           selectedCategories={[...selectedCategories]}
+          searchString={searchString}
         />
       </TableContainer>
     </div>

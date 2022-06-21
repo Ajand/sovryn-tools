@@ -12,6 +12,8 @@ const TableHeader = ({
   selectedCategories,
   selectCategories,
   setSelectedCategories,
+  searchString,
+  setSearchString
 }) => {
   const categoryLists = utils.getAllCategories(governanceState);
 
@@ -51,7 +53,9 @@ const TableHeader = ({
           <TextField
             fullWidth
             size="small"
-            placeholder="Search By Contract Name, Address, Parameter or  Governer Address"
+            placeholder="Search By Contract Name, Address or  Governer Address"
+            value={searchString}
+            onChange={e => setSearchString(e.target.value)}
           />
         </div>
       </div>
