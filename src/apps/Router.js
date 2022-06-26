@@ -1,11 +1,11 @@
 import Header from "./common/Header";
-import Dashboard from "./governance/Dashboard";
+import Revocation from "./revocation";
 
 const Router = () => {
   return (
     <div>
       <Header />
-      <Dashboard />
+      <Revocation />
     </div>
   );
 };
