@@ -1,14 +1,13 @@
 import axios from "axios";
-const getAllEventsForAnAddress = (address) => {
+const getAddressBalances = (address) => {
   return new Promise((resolve, reject) => {
-    const pageSize = 100000;
     const key = "ckey_c9c5be34b110429bab5387c7873";
     const chainId = 30;
     const baseUri = "https://api.covalenthq.com/v1";
 
     var config = {
       method: "get",
-      url: `${baseUri}/${chainId}/address/${address}/transactions_v2/?key=${key}&page-size=${pageSize}`,
+      url: `${baseUri}/${chainId}/address/${address}/balances_v2/?key=${key}`,
       headers: {},
     };
 
@@ -22,4 +21,4 @@ const getAllEventsForAnAddress = (address) => {
   });
 };
 
-export default getAllEventsForAnAddress;
+export default getAddressBalances;
