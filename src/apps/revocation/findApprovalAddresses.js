@@ -1,6 +1,4 @@
 const findApprovalAddresses = (userAddress) => (items) => {
-  console.log(items);
-
   let approvalAddresses = new Map();
   items.forEach((item) => {
     item.log_events.forEach((log) => {
