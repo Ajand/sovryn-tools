@@ -16,11 +16,15 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import { useWeb3React } from "@web3-react/core";
 
 import RevocationTable from "./RevocationTable";
 
 const Revocation = () => {
-  const address = "0x1996a1c4597721edafa2ffe433b0c26b25494ec9";
+  const { active, account, library, connector, activate, deactivate } =
+    useWeb3React();
+
+  const address = "0x4A87a2A017Be7feA0F37f03F3379d43665486Ff8";
 
   const [balances, setBalances] = useState(null);
   const [tac, setTac] = useState(null);
@@ -28,11 +32,7 @@ const Revocation = () => {
   useEffect(() => {
     getAllEventsForAnAddress(address)
       .then((r) => {
-        setTac(
-          findApprovalAddresses("0x1996a1c4597721edafa2ffe433b0c26b25494ec9")(
-            r.data.items
-          )
-        );
+        setTac(findApprovalAddresses(address)(r.data.items));
       })
       .catch((err) => {
         console.log(err);
@@ -42,8 +42,6 @@ const Revocation = () => {
       .then((r) => setBalances(r))
       .catch((err) => console.log(err));
   }, []);
-
-  console.log(tac)
 
   return (
     <div

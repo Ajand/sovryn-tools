@@ -3,7 +3,7 @@ const getAllEventsForAnAddress = (address) => {
   return new Promise((resolve, reject) => {
     const pageSize = 100000;
     const key = "ckey_c9c5be34b110429bab5387c7873";
-    const chainId = 30;
+    const chainId = 31;
     const baseUri = "https://api.covalenthq.com/v1";
 
     var config = {

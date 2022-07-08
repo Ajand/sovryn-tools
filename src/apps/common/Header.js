@@ -7,7 +7,21 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 
+import { useWeb3React } from "@web3-react/core";
+import { injected } from "./connectors";
+
 export default function ButtonAppBar() {
+  const { active, account, library, connector, activate, deactivate } =
+    useWeb3React();
+
+  const connect = async () => {
+    try {
+      await activate(injected);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -15,7 +29,9 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             SOVRYN.Tools
           </Typography>
-          {/*          <Button color="inherit">Login</Button> */}
+          <Button onClick={() => connect()} color="inherit">
+            Connect
+          </Button>
         </Toolbar>
       </AppBar>
     </Box>

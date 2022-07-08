@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Router from "./apps/Router";
 import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
+import { Web3ReactProvider } from "@web3-react/core";
+import { ethers } from "ethers";
 
 const theme = createTheme({
   palette: {
@@ -20,14 +22,20 @@ const theme = createTheme({
   },
 });
 
-function App() {
+const getLibrary = (provider) => {
+  return new ethers.providers.JsonRpcProvider(provider);
+};
 
+function App() {
   return (
     <div>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router />
-      </ThemeProvider>
+      <Web3ReactProvider getLibrary={getLibrary}>
+        {" "}
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Router />
+        </ThemeProvider>{" "}
+      </Web3ReactProvider>
     </div>
   );
 }

@@ -135,6 +135,7 @@ const rows = [
 export default function CollapsibleTable({ balances, tac }) {
   if (!balances) return <div> Loading ...</div>;
 
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
