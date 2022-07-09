@@ -34,8 +34,6 @@ const Revocation = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  console.log(active);
-
   return (
     <div
       css={css`

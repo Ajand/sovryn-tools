@@ -13,8 +13,37 @@ import {
   Button,
 } from "@mui/material";
 import { hasAllowances, tacArray } from "../utils/helpers";
+import { useState, useEffect } from "react";
+import { useWeb3React } from "@web3-react/core";
+import { ethers } from "ethers";
+import PlaceholderLoading from "react-placeholder-loading";
 
-const RevocationDetails = ({ tac, revoke, row, open }) => {
+const RevocationDetails = ({ tac, revoke, row, open, token }) => {
+  const { account } = useWeb3React();
+
+  const [allowance, setAllowance] = useState(new Map());
+
+  useEffect(() => {
+    if (hasAllowances(tac, row.contract_address) && token) {
+      tacArray(tac, row.contract_address).forEach((target) => {
+        token
+          .allowance(account, target)
+          .then(async (r) => {
+            const decimals = await token.decimals();
+            const currAllowance = new Map(allowance);
+            currAllowance.set(
+              target,
+              ethers.utils.formatUnits(String(r), decimals)
+            );
+            setAllowance(currAllowance);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
+    }
+  }, [token]);
+
   return (
     <TableRow>
       <TableCell
@@ -33,7 +62,7 @@ const RevocationDetails = ({ tac, revoke, row, open }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Contract Address</TableCell>
-                  <TableCell>Amount</TableCell>
+                  <TableCell align="center">Amount</TableCell>
                   <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
@@ -45,7 +74,17 @@ const RevocationDetails = ({ tac, revoke, row, open }) => {
                         <TableCell component="th" scope="row">
                           {contractAddress}
                         </TableCell>
-                        <TableCell></TableCell>
+                        <TableCell align="center">
+                          {allowance.get(contractAddress) ? (
+                            allowance.get(contractAddress)
+                          ) : (
+                            <PlaceholderLoading
+                              shape="rect"
+                              width={60}
+                              height={16}
+                            />
+                          )}
+                        </TableCell>
                         <TableCell align="center">
                           <Button onClick={() => revoke()}>Revoke</Button>
                         </TableCell>

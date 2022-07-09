@@ -1,21 +1,8 @@
 /* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState, Fragment } from "react";
-import {
-  Box,
-  Collapse,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-  Button,
-  Link,
-  Avatar,
-} from "@mui/material";
+import { useState, Fragment, useMemo } from "react";
+import { IconButton, TableCell, TableRow, Link, Avatar } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
@@ -28,12 +15,17 @@ const RevocationRow = ({ row, tac }) => {
 
   const { library, account, provider } = useWeb3React();
 
-  let token;
+  const token = useMemo(
+    () => new ethers.Contract(row.contract_address, erc20, library),
+    [library, row]
+  );
+
+  /*  let token;
   if (library) {
-    token = new ethers.Contract(row.contract_address, erc20, library);
+    token 
     token
       .allowance(
-        "0x4A87a2A017Be7feA0F37f03F3379d43665486Ff8",
+        account,
         "0x61172b53423e205a399640e5283e51fe60ec2256"
       )
       .then(async (r) => {
@@ -54,7 +46,7 @@ const RevocationRow = ({ row, tac }) => {
 
       token
         .approve(
-          "0x61172b53423e205a399640e5283e51fe60ec2256",
+          account,
           ethers.utils.parseUnits("5", 18)
         )
         .then((r) => console.log(r))
@@ -63,7 +55,7 @@ const RevocationRow = ({ row, tac }) => {
         });
     }
   };
-
+ */
   const haveContractsWithAllowances =
     tac &&
     tac.get(row.contract_address) &&
@@ -111,7 +103,15 @@ const RevocationRow = ({ row, tac }) => {
         </TableCell>
         <TableCell align="center">{row.protein}</TableCell>
       </TableRow>
-      <RevocationDetails revoke={revoke} tac={tac} row={row} open={open} />
+      <RevocationDetails
+        revoke={() => {
+          console.log("hi");
+        }}
+        tac={tac}
+        row={row}
+        open={open}
+        token={token}
+      />
     </Fragment>
   );
 };
