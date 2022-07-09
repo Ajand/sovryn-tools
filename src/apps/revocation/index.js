@@ -1,24 +1,15 @@
 /* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import getAllEventsForAnAddress from "./getAllEventsForAnAddress";
-import filterApprovalEvents from "./filterApprovalEvents";
 import findApprovalAddresses from "./findApprovalAddresses";
 import getAddressBalances from "./getAddressBalances";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+
 import { useWeb3React } from "@web3-react/core";
 
 import RevocationTable from "./RevocationTable";
+import ConnectFirst from "./ConnectFirst";
 
 const Revocation = () => {
   const { active, account, library, connector, activate, deactivate } =
@@ -43,13 +34,19 @@ const Revocation = () => {
       .catch((err) => console.log(err));
   }, []);
 
+  console.log(active);
+
   return (
     <div
       css={css`
         margin: 2em;
       `}
     >
-      <RevocationTable balances={balances} tac={tac} />
+      {active ? (
+        <RevocationTable balances={balances} tac={tac} />
+      ) : (
+        <ConnectFirst />
+      )}
     </div>
   );
 };
