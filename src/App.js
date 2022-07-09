@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Router from "./apps/Router";
 import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
 import { Web3ReactProvider } from "@web3-react/core";
-import { ethers } from "ethers";
+import { ethers, Web3 } from "ethers";
 
 const theme = createTheme({
   palette: {
@@ -22,15 +22,16 @@ const theme = createTheme({
   },
 });
 
-const getLibrary = (provider) => {
-  return new ethers.providers.JsonRpcProvider(provider);
-};
+function getLibrary(provider, connector) {
+  const target = new ethers.providers.Web3Provider(provider);
+  console.log(target.getSigner())
+  return target;
+}
 
 function App() {
   return (
     <div>
       <Web3ReactProvider getLibrary={getLibrary}>
-        {" "}
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Router />
