@@ -22,9 +22,8 @@ const theme = createTheme({
   },
 });
 
-function getLibrary(provider, connector) {
+function getLibrary(provider) {
   const target = new ethers.providers.Web3Provider(provider);
-  console.log(target.getSigner())
   return target;
 }
 

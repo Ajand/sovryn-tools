@@ -22,6 +22,14 @@ export default function ButtonAppBar() {
     }
   };
 
+  const disconnect = async () => {
+    try {
+      await deactivate();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -29,8 +37,17 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             SOVRYN.Tools
           </Typography>
-          <Button onClick={() => connect()} color="inherit">
-            Connect
+          <Button
+            onClick={async () => {
+              if (!active) {
+                await connect();
+              } else {
+                await disconnect();
+              }
+            }}
+            color="inherit"
+          >
+            {active ? "Disconnect" : "Connect"}
           </Button>
         </Toolbar>
       </AppBar>
