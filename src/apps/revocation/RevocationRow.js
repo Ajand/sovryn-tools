@@ -19,7 +19,9 @@ import {
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
-import erc20 from "../contracts/erc20";
+import erc20 from "../utils/contracts/erc20";
+
+import RevocationDetails from "./RevocationDetails";
 
 const RevocationRow = ({ row, tac }) => {
   const [open, setOpen] = useState(false);
@@ -62,17 +64,24 @@ const RevocationRow = ({ row, tac }) => {
     }
   };
 
+  const haveContractsWithAllowances =
+    tac &&
+    tac.get(row.contract_address) &&
+    [...tac.get(row.contract_address)].length;
+
   return (
     <Fragment>
       <TableRow>
         <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
+          {haveContractsWithAllowances ? (
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            </IconButton>
+          ) : null}
         </TableCell>
         <TableCell component="th" scope="row">
           <Avatar
@@ -102,49 +111,7 @@ const RevocationRow = ({ row, tac }) => {
         </TableCell>
         <TableCell align="center">{row.protein}</TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell
-          css={css`
-            background: #303030;
-          `}
-          style={{ paddingBottom: 0, paddingTop: 0 }}
-          colSpan={6}
-        >
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Allowances
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Contract Address</TableCell>
-                    <TableCell>Amount</TableCell>
-                    <TableCell align="center">Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {tac &&
-                    tac.get(row.contract_address) &&
-                    [...tac.get(row.contract_address)].map(
-                      (contractAddress, i) => (
-                        <TableRow key={i}>
-                          <TableCell component="th" scope="row">
-                            {contractAddress}
-                          </TableCell>
-                          <TableCell></TableCell>
-                          <TableCell align="center">
-                            <Button onClick={() => revoke()}>Revoke</Button>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    )}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+      <RevocationDetails revoke={revoke} tac={tac} row={row} open={open} />
     </Fragment>
   );
 };
