@@ -17,9 +17,12 @@ import { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import PlaceholderLoading from "react-placeholder-loading";
+import useRevoke from "../utils/hooks/useRevoke";
 
-const RevocationDetails = ({ tac, revoke, row, open, token }) => {
+const RevocationDetails = ({ tac, row, open, token }) => {
   const { account } = useWeb3React();
+
+  const revoke = useRevoke();
 
   const [allowance, setAllowance] = useState(new Map());
 
@@ -86,7 +89,17 @@ const RevocationDetails = ({ tac, revoke, row, open, token }) => {
                           )}
                         </TableCell>
                         <TableCell align="center">
-                          <Button onClick={() => revoke()}>Revoke</Button>
+                          <Button
+                            onClick={async () => {
+                              await revoke({
+                                tokenAddress: token.address,
+                                target: contractAddress,
+                                amount: 40,
+                              });
+                            }}
+                          >
+                            Revoke
+                          </Button>
                         </TableCell>
                       </TableRow>
                     )
