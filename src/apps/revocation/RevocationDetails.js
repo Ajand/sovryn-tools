@@ -21,10 +21,13 @@ import PlaceholderLoading from "react-placeholder-loading";
 import useRevoke from "../utils/hooks/useRevoke";
 
 const RevocationDetails = ({ tac, row, open, token }) => {
+  const [editTarget, setEditTarget] = useState(null);
   const [editAmount, setEditAmount] = useState(null);
   const { account } = useWeb3React();
 
   const revoke = useRevoke();
+
+  const refrenceAllowances = new Map();
 
   const [allowance, setAllowance] = useState(new Map());
 
@@ -36,12 +39,11 @@ const RevocationDetails = ({ tac, row, open, token }) => {
             .allowance(account, target)
             .then(async (r) => {
               const decimals = await token.decimals();
-              const currAllowance = new Map(allowance);
-              currAllowance.set(
+              refrenceAllowances.set(
                 target,
                 ethers.utils.formatUnits(String(r), decimals)
               );
-              setAllowance(currAllowance);
+              setAllowance(new Map(refrenceAllowances));
             })
             .catch((err) => {
               console.log(err);
@@ -86,12 +88,15 @@ const RevocationDetails = ({ tac, row, open, token }) => {
                         </TableCell>
                         <TableCell align="center">
                           {allowance.get(contractAddress) ? (
-                            editAmount !== null ? (
+                            editTarget === contractAddress ? (
                               <TextField
                                 variant="outlined"
                                 label="Allowance Amount"
                                 value={editAmount}
-                                onChange={(e) => setEditAmount(e.target.value)}
+                                onChange={(e) => {
+                                  setEditTarget(contractAddress);
+                                  setEditAmount(e.target.value);
+                                }}
                                 size="small"
                               />
                             ) : (
@@ -106,13 +111,14 @@ const RevocationDetails = ({ tac, row, open, token }) => {
                           )}
                         </TableCell>
                         <TableCell align="center">
-                          {editAmount === null ? (
+                          {editTarget !== contractAddress ? (
                             <>
                               <Button
                                 size="small"
-                                onClick={() =>
-                                  setEditAmount(allowance.get(contractAddress))
-                                }
+                                onClick={() => {
+                                  setEditTarget(contractAddress);
+                                  setEditAmount(allowance.get(contractAddress));
+                                }}
                                 disabled={!allowance.get(contractAddress)}
                               >
                                 Edit
@@ -135,7 +141,11 @@ const RevocationDetails = ({ tac, row, open, token }) => {
                           ) : (
                             <>
                               <Button
-                                onClick={() => setEditAmount(null)}
+                                onClick={() => {
+                                  setEditTarget(null);
+
+                                  setEditAmount(null);
+                                }}
                                 size="small"
                               >
                                 Cancel
@@ -154,6 +164,7 @@ const RevocationDetails = ({ tac, row, open, token }) => {
                                     amount: editAmount,
                                   });
                                   setEditAmount(null);
+                                  setEditTarget(null);
                                   // TODO, should create an alert about processes is on going
                                 }}
                               >

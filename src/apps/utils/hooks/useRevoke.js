@@ -14,6 +14,11 @@ const useRevoke = () => {
     const targetAmount = amount
       ? ethers.utils.parseUnits(String(amount), await token.decimals())
       : 0;
+
+    if (targetAmount === 0 && (await token.allowance(account, target)).eq(0)) {
+      return true;
+    }
+
     return await token.approve(target, targetAmount);
   };
 

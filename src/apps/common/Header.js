@@ -53,7 +53,6 @@ export default function ButtonAppBar() {
               SOVRYN.Tools
             </Typography>
             <Button
-              round
               css={css`
                 margin-left: 1.5em;
                 border-radius: 0;

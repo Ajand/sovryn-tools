@@ -2,11 +2,19 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { useState, Fragment, useMemo } from "react";
-import { IconButton, TableCell, TableRow, Link, Avatar } from "@mui/material";
+import {
+  IconButton,
+  TableCell,
+  TableRow,
+  Link,
+  Avatar,
+  Button,
+} from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import erc20 from "../utils/contracts/erc20";
+import useRevoke from "../utils/hooks/useRevoke";
 
 import RevocationDetails from "./RevocationDetails";
 
@@ -15,47 +23,13 @@ const RevocationRow = ({ row, tac }) => {
 
   const { library, account, provider } = useWeb3React();
 
+  const revoke = useRevoke();
+
   const token = useMemo(
     () => new ethers.Contract(row.contract_address, erc20, library),
     [library, row]
   );
 
-  /*  let token;
-  if (library) {
-    token 
-    token
-      .allowance(
-        account,
-        "0x61172b53423e205a399640e5283e51fe60ec2256"
-      )
-      .then(async (r) => {
-        const decimals = await token.decimals();
-        console.log(ethers.utils.formatUnits(String(r), decimals));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  const revoke = () => {
-    if (library) {
-      const signer = library.getSigner();
-      console.log(signer);
-
-      token = new ethers.Contract(row.contract_address, erc20, signer);
-
-      token
-        .approve(
-          account,
-          ethers.utils.parseUnits("5", 18)
-        )
-        .then((r) => console.log(r))
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
- */
   const haveContractsWithAllowances =
     tac &&
     tac.get(row.contract_address) &&
@@ -101,17 +75,29 @@ const RevocationRow = ({ row, tac }) => {
               : 0
             : "Loading"}
         </TableCell>
-        <TableCell align="center">{row.protein}</TableCell>
+        <TableCell align="center">
+          {haveContractsWithAllowances && (
+            <Button
+              variant="outlined"
+              onClick={async () => {
+                const revokeRecur = async (targetArray) => {
+                  if (targetArray.length === 0) return;
+                  await revoke({
+                    tokenAddress: token.address,
+                    target: targetArray[0],
+                  });
+                  return revokeRecur(targetArray.slice(1, targetArray.length));
+                };
+
+                revokeRecur([...tac.get(row.contract_address)]);
+              }}
+            >
+              Revoke All
+            </Button>
+          )}
+        </TableCell>
       </TableRow>
-      <RevocationDetails
-        revoke={() => {
-          console.log("hi");
-        }}
-        tac={tac}
-        row={row}
-        open={open}
-        token={token}
-      />
+      <RevocationDetails tac={tac} row={row} open={open} token={token} />
     </Fragment>
   );
 };

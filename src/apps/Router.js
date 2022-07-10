@@ -1,6 +1,6 @@
 import Header from "./common/Header";
 import Revocation from "./revocation";
-import Governance from './governance/Dashboard'
+//import Governance from './governance/Dashboard'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const Router = () => {
@@ -9,7 +9,7 @@ const Router = () => {
       <Header />
       
       <Routes>
-        <Route path="/" element={<Governance />} />
+      {/*  <Route path="/" element={<Governance />} /> */}
         <Route path="/revocation" element={<Revocation />} />
       </Routes>
     </BrowserRouter>
