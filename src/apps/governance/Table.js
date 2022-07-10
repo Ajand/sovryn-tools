@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -33,6 +33,14 @@ const Row = ({ contract, getContractName }) => {
 
   if (additionalData) {
     console.log(additionalData);
+  }
+
+  let targetCategoryName = contract.categoryName;
+  if (targetCategoryName === "Marginal Trading Protocol") {
+    targetCategoryName = "Margin Trading Protocol";
+  }
+  if (targetCategoryName === "Aggeregators") {
+    targetCategoryName = "Aggregators";
   }
 
   return (
@@ -84,7 +92,7 @@ const Row = ({ contract, getContractName }) => {
           )}
         </TableCell>
         <TableCell align="center">
-          <Chip label={contract.categoryName} variant="outlined" />
+          <Chip label={targetCategoryName} variant="outlined" />
         </TableCell>
       </TableRow>
       <TableRow

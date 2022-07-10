@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AppBar,
   Box,
@@ -24,6 +24,35 @@ export default function ButtonAppBar() {
 
   const { active, account, library, connector, activate, deactivate } =
     useWeb3React();
+
+  useEffect(() => {
+    if (window.ethereum) {
+      const changeChain = (chainId) => {
+        if (chainId !== "0x1f" && chainId !== "0x1e") {
+          window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0x1e",
+                chainName: "RSK Mainnet",
+                nativeCurrency: {
+                  name: "RSK Bitcoin",
+                  symbol: "RBTC",
+                  decimals: 18,
+                },
+                rpcUrls: ["https://public-node.rsk.co"],
+                blockExplorerUrls: ["https://explorer.rsk.co"],
+              },
+            ],
+          });
+        }
+      };
+
+      window.ethereum.on("connect", ({ chainId }) => changeChain(chainId));
+    }
+
+    //window.ethereum.on("chainChanged", (_chainId) => changeChain(_chainId));
+  }, []);
 
   const connect = async (walletType) => {
     try {
@@ -122,7 +151,9 @@ export default function ButtonAppBar() {
             css={css`
               margin-right: 1em;
             `}
-            onClick={async () => connect(injected)}
+            onClick={async () => {
+              connect(injected);
+            }}
             variant="text"
           >
             Metamask

@@ -11,8 +11,8 @@ import { useWeb3React } from "@web3-react/core";
 import RevocationTable from "./RevocationTable";
 import ConnectFirst from "./ConnectFirst";
 
-const Revocation = ({governanceState}) => {
-  const { active, account, library, connector, activate, deactivate } =
+const Revocation = ({ governanceState }) => {
+  const { active, account, library, connector, activate, deactivate, chainId } =
     useWeb3React();
 
   const address = account;
@@ -22,7 +22,7 @@ const Revocation = ({governanceState}) => {
 
   useEffect(() => {
     if (address) {
-      getAllEventsForAnAddress(address)
+      getAllEventsForAnAddress(chainId)(address)
         .then((r) => {
           setTac(findApprovalAddresses(address)(r.data.items));
         })
@@ -30,13 +30,13 @@ const Revocation = ({governanceState}) => {
           console.log(err);
         });
 
-      getAddressBalances(address)
+      getAddressBalances(chainId)(address)
         .then((r) => {
           setBalances(r);
         })
         .catch((err) => console.log(err));
     }
-  }, [account]);
+  }, [account, chainId]);
 
   return (
     <div
@@ -45,7 +45,11 @@ const Revocation = ({governanceState}) => {
       `}
     >
       {active ? (
-        <RevocationTable governanceState={governanceState} balances={balances} tac={tac} />
+        <RevocationTable
+          governanceState={governanceState}
+          balances={balances}
+          tac={tac}
+        />
       ) : (
         <ConnectFirst />
       )}

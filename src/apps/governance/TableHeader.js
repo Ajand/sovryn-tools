@@ -13,7 +13,7 @@ const TableHeader = ({
   selectCategories,
   setSelectedCategories,
   searchString,
-  setSearchString
+  setSearchString,
 }) => {
   const categoryLists = utils.getAllCategories(governanceState);
 
@@ -53,9 +53,9 @@ const TableHeader = ({
           <TextField
             fullWidth
             size="small"
-            placeholder="Search By Contract Name, Address or  Governer Address"
+            placeholder="Search By Contract Name or Address"
             value={searchString}
-            onChange={e => setSearchString(e.target.value)}
+            onChange={(e) => setSearchString(e.target.value)}
           />
         </div>
       </div>
@@ -79,21 +79,33 @@ const TableHeader = ({
               setSelectedCategories(new Set([]));
             }}
           />
-          {categoryLists.map((category) => (
-            <Chip
-              css={css`
-                padding: 0.25em;
-                margin-right: 0.25em;
-                margin-top: 0.5em;
-              `}
-              key={category}
-              variant={selectedCategories.has(category) ? "filled" : "outlined"}
-              label={category}
-              onClick={() => {
-                selectCategories(category);
-              }}
-            />
-          ))}
+          {categoryLists.map((category) => {
+            let targetCategoryName = category
+            if(targetCategoryName === "Marginal Trading Protocol" ) {
+              targetCategoryName = "Margin Trading Protocol"
+            }
+            if(targetCategoryName === "Aggeregators" ) {
+              targetCategoryName = "Aggregators"
+            }
+
+            return (
+              <Chip
+                css={css`
+                  padding: 0.25em;
+                  margin-right: 0.25em;
+                  margin-top: 0.5em;
+                `}
+                key={category}
+                variant={
+                  selectedCategories.has(category) ? "filled" : "outlined"
+                }
+                label={targetCategoryName}
+                onClick={() => {
+                  selectCategories(category);
+                }}
+              />
+            );
+          })}
         </div>
       </Collapse>
     </Paper>

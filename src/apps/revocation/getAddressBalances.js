@@ -1,8 +1,7 @@
 import axios from "axios";
-const getAddressBalances = (address) => {
+const getAddressBalances = (chainId = 30) => (address) => {
   return new Promise((resolve, reject) => {
     const key = "ckey_c9c5be34b110429bab5387c7873";
-    const chainId = 31;
     const baseUri = "https://api.covalenthq.com/v1";
 
     var config = {
