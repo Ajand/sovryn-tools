@@ -4,19 +4,11 @@ import { css } from "@emotion/react";
 import TableHeader from "./TableHeader";
 import Table from "./Table";
 import { Paper, TableContainer, useTheme } from "@mui/material";
-import GovernanceData from "sovryn-governance-data";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-const governanceData = new GovernanceData(
-  localStorage,
-  process.env.REACT_APP_RSK_RPC_URL
-);
-
-const Dashboard = () => {
+const Dashboard = ({ governanceState }) => {
   const theme = useTheme();
-  const [governanceState, setGovernanceState] = useState(
-    governanceData.getData()
-  );
+
   const [searchString, setSearchString] = useState("");
 
   const [selectedCategories, setSelectedCategories] = useState(new Set());
@@ -30,12 +22,6 @@ const Dashboard = () => {
     }
     setSelectedCategories(nS);
   };
-
-  useEffect(() => {
-    governanceData.onChange((currentData) => {
-      setGovernanceState(currentData);
-    });
-  }, []);
 
   return (
     <div

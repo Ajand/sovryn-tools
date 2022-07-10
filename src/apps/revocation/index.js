@@ -11,7 +11,7 @@ import { useWeb3React } from "@web3-react/core";
 import RevocationTable from "./RevocationTable";
 import ConnectFirst from "./ConnectFirst";
 
-const Revocation = () => {
+const Revocation = ({governanceState}) => {
   const { active, account, library, connector, activate, deactivate } =
     useWeb3React();
 
@@ -45,7 +45,7 @@ const Revocation = () => {
       `}
     >
       {active ? (
-        <RevocationTable balances={balances} tac={tac} />
+        <RevocationTable governanceState={governanceState} balances={balances} tac={tac} />
       ) : (
         <ConnectFirst />
       )}

@@ -19,8 +19,9 @@ import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import PlaceholderLoading from "react-placeholder-loading";
 import useRevoke from "../utils/hooks/useRevoke";
+import { utils } from "sovryn-governance-data";
 
-const RevocationDetails = ({ tac, row, open, token }) => {
+const RevocationDetails = ({ tac, row, open, token, governanceState }) => {
   const [editTarget, setEditTarget] = useState(null);
   const [editAmount, setEditAmount] = useState(null);
   const { account } = useWeb3React();
@@ -56,6 +57,10 @@ const RevocationDetails = ({ tac, row, open, token }) => {
     }
   }, [token]);
 
+  const getContractName = utils.getContractName(
+    utils.getContracts(governanceState)
+  );
+
   return (
     <TableRow>
       <TableCell
@@ -84,7 +89,9 @@ const RevocationDetails = ({ tac, row, open, token }) => {
                     (contractAddress, i) => (
                       <TableRow key={i}>
                         <TableCell component="th" scope="row">
-                          {contractAddress}
+                          {getContractName(contractAddress)
+                            ? getContractName(contractAddress)
+                            : contractAddress}
                         </TableCell>
                         <TableCell align="center">
                           {allowance.get(contractAddress) ? (

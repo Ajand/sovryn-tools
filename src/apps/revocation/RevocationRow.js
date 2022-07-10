@@ -18,7 +18,7 @@ import useRevoke from "../utils/hooks/useRevoke";
 
 import RevocationDetails from "./RevocationDetails";
 
-const RevocationRow = ({ row, tac }) => {
+const RevocationRow = ({ row, tac, governanceState }) => {
   const [open, setOpen] = useState(false);
 
   const { library, account, provider } = useWeb3React();
@@ -97,7 +97,7 @@ const RevocationRow = ({ row, tac }) => {
           )}
         </TableCell>
       </TableRow>
-      <RevocationDetails tac={tac} row={row} open={open} token={token} />
+      <RevocationDetails governanceState={governanceState} tac={tac} row={row} open={open} token={token} />
     </Fragment>
   );
 };

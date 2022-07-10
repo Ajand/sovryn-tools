@@ -13,10 +13,8 @@ import {
 import PlaceholderLoading from "react-placeholder-loading";
 import RevocationRow from "./RevocationRow";
 
-const RevocationTable = ({ balances, tac }) => {
+const RevocationTable = ({ balances, tac, governanceState }) => {
   const loading = balances ? false : true;
-
-  console.log(balances)
 
   return (
     <TableContainer component={Paper}>
@@ -51,7 +49,12 @@ const RevocationTable = ({ balances, tac }) => {
                 </TableRow>
               ))
             : balances.data.items.map((row, i) => (
-                <RevocationRow key={i} row={row} tac={tac} />
+                <RevocationRow
+                  governanceState={governanceState}
+                  key={i}
+                  row={row}
+                  tac={tac}
+                />
               ))}
         </TableBody>
       </Table>
