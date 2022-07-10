@@ -15,24 +15,28 @@ const Revocation = () => {
   const { active, account, library, connector, activate, deactivate } =
     useWeb3React();
 
-  const address = "0x4A87a2A017Be7feA0F37f03F3379d43665486Ff8";
+  const address = account;
 
   const [balances, setBalances] = useState(null);
   const [tac, setTac] = useState(null);
 
   useEffect(() => {
-    getAllEventsForAnAddress(address)
-      .then((r) => {
-        setTac(findApprovalAddresses(address)(r.data.items));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (address) {
+      getAllEventsForAnAddress(address)
+        .then((r) => {
+          setTac(findApprovalAddresses(address)(r.data.items));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-    getAddressBalances(address)
-      .then((r) => setBalances(r))
-      .catch((err) => console.log(err));
-  }, []);
+      getAddressBalances(address)
+        .then((r) => {
+          setBalances(r);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [account]);
 
   return (
     <div

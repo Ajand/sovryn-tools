@@ -16,6 +16,8 @@ import RevocationRow from "./RevocationRow";
 const RevocationTable = ({ balances, tac }) => {
   const loading = balances ? false : true;
 
+  console.log(balances)
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">

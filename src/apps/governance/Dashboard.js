@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 
 const governanceData = new GovernanceData(
   localStorage,
-  "https://mainnet.sovryn.app/"
+  process.env.REACT_APP_RSK_RPC_URL
 );
 
 const Dashboard = () => {
