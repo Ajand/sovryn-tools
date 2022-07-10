@@ -11,6 +11,7 @@ import {
   TableRow,
   Typography,
   Button,
+  TextField,
 } from "@mui/material";
 import { hasAllowances, tacArray } from "../utils/helpers";
 import { useState, useEffect } from "react";
@@ -20,6 +21,7 @@ import PlaceholderLoading from "react-placeholder-loading";
 import useRevoke from "../utils/hooks/useRevoke";
 
 const RevocationDetails = ({ tac, row, open, token }) => {
+  const [editAmount, setEditAmount] = useState(null);
   const { account } = useWeb3React();
 
   const revoke = useRevoke();
@@ -28,22 +30,27 @@ const RevocationDetails = ({ tac, row, open, token }) => {
 
   useEffect(() => {
     if (hasAllowances(tac, row.contract_address) && token) {
-      tacArray(tac, row.contract_address).forEach((target) => {
-        token
-          .allowance(account, target)
-          .then(async (r) => {
-            const decimals = await token.decimals();
-            const currAllowance = new Map(allowance);
-            currAllowance.set(
-              target,
-              ethers.utils.formatUnits(String(r), decimals)
-            );
-            setAllowance(currAllowance);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      });
+      const getAllowances = () =>
+        tacArray(tac, row.contract_address).forEach((target) => {
+          token
+            .allowance(account, target)
+            .then(async (r) => {
+              const decimals = await token.decimals();
+              const currAllowance = new Map(allowance);
+              currAllowance.set(
+                target,
+                ethers.utils.formatUnits(String(r), decimals)
+              );
+              setAllowance(currAllowance);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        });
+      getAllowances();
+      setInterval(() => {
+        getAllowances();
+      }, 30 * 1000);
     }
   }, [token]);
 
@@ -79,7 +86,17 @@ const RevocationDetails = ({ tac, row, open, token }) => {
                         </TableCell>
                         <TableCell align="center">
                           {allowance.get(contractAddress) ? (
-                            allowance.get(contractAddress)
+                            editAmount !== null ? (
+                              <TextField
+                                variant="outlined"
+                                label="Allowance Amount"
+                                value={editAmount}
+                                onChange={(e) => setEditAmount(e.target.value)}
+                                size="small"
+                              />
+                            ) : (
+                              allowance.get(contractAddress)
+                            )
                           ) : (
                             <PlaceholderLoading
                               shape="rect"
@@ -89,17 +106,61 @@ const RevocationDetails = ({ tac, row, open, token }) => {
                           )}
                         </TableCell>
                         <TableCell align="center">
-                          <Button
-                            onClick={async () => {
-                              await revoke({
-                                tokenAddress: token.address,
-                                target: contractAddress,
-                                amount: 40,
-                              });
-                            }}
-                          >
-                            Revoke
-                          </Button>
+                          {editAmount === null ? (
+                            <>
+                              <Button
+                                size="small"
+                                onClick={() =>
+                                  setEditAmount(allowance.get(contractAddress))
+                                }
+                                disabled={!allowance.get(contractAddress)}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                onClick={async () => {
+                                  await revoke({
+                                    tokenAddress: token.address,
+                                    target: contractAddress,
+                                  });
+                                }}
+                                css={css`
+                                  margin-left: 0.5em;
+                                `}
+                                size="small"
+                              >
+                                Revoke
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                onClick={() => setEditAmount(null)}
+                                size="small"
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                css={css`
+                                  margin-left: 0.5em;
+                                `}
+                                variant="contained"
+                                size="small"
+                                disabled={isNaN(editAmount)}
+                                onClick={async () => {
+                                  await revoke({
+                                    tokenAddress: token.address,
+                                    target: contractAddress,
+                                    amount: editAmount,
+                                  });
+                                  setEditAmount(null);
+                                  // TODO, should create an alert about processes is on going
+                                }}
+                              >
+                                Change
+                              </Button>
+                            </>
+                          )}
                         </TableCell>
                       </TableRow>
                     )

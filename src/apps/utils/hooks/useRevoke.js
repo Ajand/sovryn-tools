@@ -11,11 +11,9 @@ const useRevoke = () => {
   const revoke = async ({ tokenAddress, target, amount }) => {
     const token = new ethers.Contract(tokenAddress, erc20, signer);
 
-    console.log(ethers.utils.parseUnits(String(amount), await token.decimals()))
-
     const targetAmount = amount
       ? ethers.utils.parseUnits(String(amount), await token.decimals())
-      : await token.allowance(account, target);
+      : 0;
     return await token.approve(target, targetAmount);
   };
 
