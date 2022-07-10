@@ -25,7 +25,7 @@
     "react-placeholder-loading": "^0.5.30",
     "react-router-dom": "6",
     "react-scripts": "4.0.3",
-    "sovryn-governance-data": "^1.0.22",
+    "sovryn-governance-data": "^1.0.29",
     "web-vitals": "^2.1.4",
     "web3": "^1.7.4"
   },

@@ -3,12 +3,10 @@
 import { css } from "@emotion/react";
 import TableHeader from "./TableHeader";
 import Table from "./Table";
-import { Paper, TableContainer, useTheme } from "@mui/material";
+import { Paper, TableContainer } from "@mui/material";
 import { useState } from "react";
 
 const Dashboard = ({ governanceState }) => {
-  const theme = useTheme();
-
   const [searchString, setSearchString] = useState("");
 
   const [selectedCategories, setSelectedCategories] = useState(new Set());
