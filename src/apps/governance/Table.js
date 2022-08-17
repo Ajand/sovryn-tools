@@ -34,15 +34,6 @@ const Row = ({ contract, getContractName }) => {
   if (additionalData) {
     console.log(additionalData);
   }
-
-  let targetCategoryName = contract.categoryName;
-  if (targetCategoryName === "Marginal Trading Protocol") {
-    targetCategoryName = "Margin Trading Protocol";
-  }
-  if (targetCategoryName === "Aggeregators") {
-    targetCategoryName = "Aggregators";
-  }
-
   return (
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
@@ -70,7 +61,13 @@ const Row = ({ contract, getContractName }) => {
         <TableCell align="center">
           <Link
             target="_blank"
-            href={`https://explorer.rsk.co/address/${contract.address}`}
+            href={
+              contract.chain === "eth"
+                ? `https://etherscan.io/address/${contract.address}`
+                : contract.chain === "bsc"
+                ? `https://bscscan.com/address/${contract.address}`
+                : `https://explorer.rsk.co/address/${contract.address}`
+            }
           >
             {formatAddress(contract.contract.address)}
           </Link>
@@ -79,7 +76,13 @@ const Row = ({ contract, getContractName }) => {
           {contract.governor.value ? (
             <Link
               target="_blank"
-              href={`https://explorer.rsk.co/address/${contract.governor?.value}`}
+              href={
+                contract.chain === "eth"
+                  ? `https://etherscan.io/address/${contract.governor?.value}`
+                  : contract.chain === "bsc"
+                  ? `https://bscscan.com/address/${contract.governor?.value}`
+                  : `https://explorer.rsk.co/address/${contract.governor?.value}`
+              }
             >
               {getContractName(contract.governor.value)
                 ? getContractName(contract.governor.value)
@@ -92,7 +95,7 @@ const Row = ({ contract, getContractName }) => {
           )}
         </TableCell>
         <TableCell align="center">
-          <Chip label={targetCategoryName} variant="outlined" />
+          <Chip label={contract.categoryName} variant="outlined" />
         </TableCell>
       </TableRow>
       <TableRow
@@ -131,7 +134,7 @@ const Row = ({ contract, getContractName }) => {
                           >
                             Show Details
                           </Button>
-                        ) : param.value ? (
+                        ) : param.value !== undefined ? (
                           String(param.value)
                         ) : param.loading ? (
                           "Loading"
