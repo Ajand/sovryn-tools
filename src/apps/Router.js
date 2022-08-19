@@ -7,8 +7,8 @@ import GovernanceData from "sovryn-governance-data";
 const governanceData = new GovernanceData(
   localStorage,
   process.env.REACT_APP_RSK_RPC_URL,
-  "https://eth-mainnet.g.alchemy.com/v2/S64_u-tBqkMizvBVYv8soHEvTSAMtKV2",
-  "https://bsc-dataseed3.ninicoin.io"
+  process.env.REACT_APP_ETH_RPC_URL,
+  process.env.REACT_APP_BSC_RPC_URL
 );
 
 const Router = () => {

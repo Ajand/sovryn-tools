@@ -113,19 +113,19 @@ const Row = ({ contract, getContractName }) => {
                 <TableHead>
                   <TableRow>
                     <TableCell align="center">Name</TableCell>
-                    <TableCell align="center">Identifier</TableCell>
+                    {/* <TableCell align="center">Identifier</TableCell> */}
                     <TableCell align="center">Value</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {notOwnerParams.map((param) => (
+                  {notOwnerParams.map((param, i) => (
                     <TableRow
-                      key={`${notOwnerParams.identifier}:${param?.name}`}
+                      key={`${notOwnerParams.identifier}:${param?.name}:${i}`}
                     >
                       <TableCell align="center" component="th" scope="row">
                         {param?.name}
                       </TableCell>
-                      <TableCell align="center">{param.identifier}</TableCell>
+                      {/*     <TableCell align="center">{param.identifier}</TableCell> */}
                       <TableCell align="center">
                         {param?.value instanceof Map ? (
                           <Button
@@ -163,6 +163,7 @@ const Row = ({ contract, getContractName }) => {
               </TableHead>
               <TableBody>
                 {[...additionalData.value].map((aD, i) => {
+                  console.log(additionalData)
                   return (
                     <TableRow key={`${String(aD[0])}:${i}`}>
                       <TableCell align="center">{String(aD[0])}</TableCell>
