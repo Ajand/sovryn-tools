@@ -21,7 +21,7 @@ import RevocationDetails from "./RevocationDetails";
 const RevocationRow = ({ row, tac, governanceState }) => {
   const [open, setOpen] = useState(false);
 
-  const { library, account, provider } = useWeb3React();
+  const { library } = useWeb3React();
 
   const revoke = useRevoke();
 

@@ -1,4 +1,4 @@
-export default [
+const erc20 = [
   {
     constant: false,
     inputs: [
@@ -60,3 +60,5 @@ export default [
     type: "function",
   },
 ];
+
+export default erc20

@@ -22,8 +22,7 @@ export default function ButtonAppBar() {
 
   const navigate = useNavigate();
 
-  const { active, account, library, connector, activate, deactivate } =
-    useWeb3React();
+  const { active, activate, deactivate } = useWeb3React();
 
   useEffect(() => {
     if (window.ethereum) {
@@ -95,7 +94,7 @@ export default function ButtonAppBar() {
                   border-radius: 0;
                 `}
                 style={
-                  location.pathname == "/"
+                  location.pathname === "/"
                     ? { borderBottom: "2px solid #FEC004" }
                     : null
                 }
@@ -110,7 +109,7 @@ export default function ButtonAppBar() {
                   border-radius: 0;
                 `}
                 style={
-                  location.pathname == "/revocation"
+                  location.pathname === "/revocation"
                     ? { borderBottom: "2px solid #FEC004" }
                     : null
                 }

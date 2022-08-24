@@ -12,8 +12,7 @@ import RevocationTable from "./RevocationTable";
 import ConnectFirst from "./ConnectFirst";
 
 const Revocation = ({ governanceState }) => {
-  const { active, account, library, connector, activate, deactivate, chainId } =
-    useWeb3React();
+  const { active, account, chainId } = useWeb3React();
 
   const address = account;
 
@@ -36,7 +35,7 @@ const Revocation = ({ governanceState }) => {
         })
         .catch((err) => console.log(err));
     }
-  }, [account, chainId]);
+  }, [account, chainId, address]);
 
   return (
     <div

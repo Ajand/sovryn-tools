@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
 import Router from "./apps/Router";
 import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
 import { Web3ReactProvider } from "@web3-react/core";
-import { ethers, Web3 } from "ethers";
+import { ethers } from "ethers";
 
 const theme = createTheme({
   palette: {

@@ -14,7 +14,7 @@ import {
   TextField,
 } from "@mui/material";
 import { hasAllowances, tacArray } from "../utils/helpers";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import PlaceholderLoading from "react-placeholder-loading";
@@ -28,7 +28,7 @@ const RevocationDetails = ({ tac, row, open, token, governanceState }) => {
 
   const revoke = useRevoke();
 
-  const refrenceAllowances = new Map();
+  const refrenceAllowances = useMemo(() => new Map(), []);
 
   const [allowance, setAllowance] = useState(new Map());
 
@@ -55,7 +55,7 @@ const RevocationDetails = ({ tac, row, open, token, governanceState }) => {
         getAllowances();
       }, 30 * 1000);
     }
-  }, [token]);
+  }, [token, refrenceAllowances, account, tac, row.contract_address]);
 
   const getContractName = utils.getContractName(
     utils.getContracts(governanceState)
